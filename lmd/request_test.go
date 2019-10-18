@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"testing"
 	"time"
+	"fmt"
 )
 
 func TestRequestHeader(t *testing.T) {
@@ -1083,4 +1084,27 @@ func TestNegate(t *testing.T) {
 	if err := StopTestPeer(peer); err != nil {
 		panic(err.Error())
 	}
+}
+
+func TestComments(t *testing.T) {
+	peer := StartTestPeer(1, 10, 10)
+	PauseTestPeers(peer)
+
+	res, _, err := peer.QueryString("GET hosts\nColumns: comments\nFilter: name = testhost_2\n\n")
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Printf("res: %v\n", res)
+
+
+	// commentID := ((*res)[0][0]).(int)
+	// fmt.Printf("CommentID: %v\n", commentID)
+	/*if _, err := (*res)[0][0].(int); err != nil {
+		t.Error(err)
+	}*/
+
+	if err = assertEq(1., (*res)[0][0]); err != nil {
+		t.Error(err)
+	}
+
 }
